@@ -10,3 +10,6 @@ variable "subnet_list" {
   description = "AWS Private Subnets"
   default = ["" , "" , "" ]
 }
+variable "_ssh_public_key" {
+  default = ""
+}

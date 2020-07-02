@@ -9,7 +9,7 @@ resource "aws_instance" "registry-node" {
   ami = var.rhcos_ami
   instance_type = var.ec2_type
   subnet_id = var.subnet_list[0]
-  //user_data = "{\"ignition\":{\"config\":{},\"security\":{\"tls\":{}},\"timeouts\":{},\"version\":\"2.2.0\"},\"networkd\":{},\"passwd\":{\"users\":[{\"name\":\"core\",\"sshAuthorizedKeys\":[\"${trimspace(file(var.registry_ssh_public_key_file_path))}\"]}]},\"storage\":{},\"systemd\":{}}"
+  user_data = "{\"ignition\":{\"config\":{},\"security\":{\"tls\":{}},\"timeouts\":{},\"version\":\"2.2.0\"},\"networkd\":{},\"passwd\":{\"users\":[{\"name\":\"core\",\"sshAuthorizedKeys\":[\"${var.ssh_public_key}}\"]}]},\"storage\":{},\"systemd\":{}}"
 
   root_block_device { volume_size = var.volume_size }
 

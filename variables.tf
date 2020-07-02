@@ -5,7 +5,9 @@ variable "default_tags" { default = {} }
 variable "private_vpc_cidr" {default = "" }
 variable "rhcos_ami" { default = "" }
 variable "ec2_type" { default = "" }
-variable "volume_size" { default = "120"}
+variable "volume_size" { default = "120" }
+variable "cluster_domain" { default = "" }
+variable "master_count" { default = "" }
 variable "subnet_list" {
   description = "AWS Private Subnets"
   default = ["" , "" , "" ]

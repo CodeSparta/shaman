@@ -5,7 +5,7 @@ data "aws_security_group" "master-sg" {
   }
 }
 
-resource "aws_instance" "master-node" {
+resource "aws_instance" "master-nodes" {
   ami = var.rhcos_ami
   instance_type = var.ec2_type
   count = var.master_count
@@ -25,4 +25,16 @@ resource "aws_instance" "master-node" {
     "kubernetes.io/cluster/${var.cluster_name}", "owned"
     )
   )
+}
+
+resource "aws_lb_target_group_attachment" "master_6443" {
+  count = var.master_count
+  target_group_arn = data.aws_lb_target_group.int_6443_tg.arn
+  target_id        = aws_instance.master-nodes[count.index].private_ip
+}
+
+resource "aws_lb_target_group_attachment" "master_22623" {
+  count = var.master_count
+  target_group_arn = data.aws_lb_target_group.int_22623_tg.arn
+  target_id        = aws_instance.master-nodes[count.index].private_ip
 }

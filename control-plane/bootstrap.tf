@@ -25,3 +25,13 @@ resource "aws_instance" "bootstrap-node" {
     )
   )
 }
+
+resource "aws_lb_target_group_attachment" "bootstrap_22623" {
+  target_group_arn = data.aws_lb_target_group.int_22623_tg.arn
+  target_id        = aws_instance.bootstrap-node.private_ip
+}
+
+resource "aws_lb_target_group_attachment" "bootstrap_6443" {
+  target_group_arn = data.aws_lb_target_group.int_6443_tg.arn
+  target_id        = aws_instance.bootstrap-node.private_ip
+}

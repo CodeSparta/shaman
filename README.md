@@ -73,7 +73,8 @@ cd $HOME/fences-terraform/Registry-node/ && terraform apply -auto-approve
 ```
 
 ## Step 5
-Refer to the OCP4 deploy WIKI to configure the registry. 
+Refer to the OCP4 deploy WIKI to configure the registry.
+- [OpenShift 4.x on AWS AirGapped GovCloud](https://repo1.dsop.io/dsop/redhat/platformone/ocp4x/wiki/-/tree/v2-govcloud-automation) 
 
 ## Step 6 
 Create the internal ELB. 

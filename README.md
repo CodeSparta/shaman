@@ -6,6 +6,13 @@ This is used to create the following:
 - Registry-node
 - control-plane
 
+## Deployment environment 
+The bastion box assumes it has an IAM role with the ability to deploy the following:
+
+- Security-groups 
+- elb
+- Registry-node
+- control-plane
 
 ## Prereqs 
 - VPC has been configured. 

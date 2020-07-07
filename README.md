@@ -7,12 +7,17 @@ This is used to create the following:
 - control-plane
 
 ## Deployment environment 
-The bastion box assumes it has an IAM role with the ability to deploy the following:
+The bastion box assumes it has an IAM role with the ability to create the ec2 instances, ELB and security groups. If keys are being used the user will need to modify the provider.tf file to the following:
 
-- Security-groups 
-- elb
-- Registry-node
-- control-plane
+```adil
+provider "aws" {
+  access_key = "my-access-key"
+  secret_key = "my-secret-key"
+  region  = var.aws_region
+}
+```
+
+
 
 ## Prereqs 
 - VPC has been configured. 
@@ -96,4 +101,10 @@ To destroy the created resources they have to be brought down in the following o
 - Security groups
 
 The command to destroy the resources is terraform destroy
+```aidl
+cd $HOME/fences-terraform/elb/ && terraform destroy -auto-approve
+cd $HOME/fences-terraform/control-plane && terraform destroy -auto-approve
+cd $HOME/fences-terraform/Registry-node && terraform destroy -auto-approve
+cd $HOME/fences-terraform/Security-groups && terraform destroy -auto-approve
+```
 

@@ -42,8 +42,19 @@ provider "aws" {
 |subenet_list | None | subnet-xxx, subnet-xxx, subnet-xxx | These are the subnet ids for the 3 private subnets used for the OCP deployment in the VPC. |
 |ssh_public_key | None | rsa public key | A public key to be used for ssh configuration of the registry node |
 
+## Internet connected box 
+
+As the local user run the following: 
+```aidl
+git clone https://repo1.dsop.io/dsop/redhat/platformone/ocp4x/terraform/fences $HOME/terraform-fences
+tar -cvf terraform-fences.tar.gz $HOME/terraform-fences/
+```
+
 ## Step 1
-- Untar fences-terraform.tar to the $HOME directory 
+On the bastion box with the IAM aws role attached 
+```aidl
+tar -vxf terraform-fences.tar.gz 
+```
 - Create a path for terraform to be run locally
 ```aidl
 sudo cp $HOME/fences-terraform/terraform-plugins/terraform /usr/local/bin/

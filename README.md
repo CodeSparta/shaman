@@ -43,7 +43,7 @@ provider "aws" {
 |ssh_public_key | None | rsa public key | A public key to be used for ssh configuration of the registry node |
 |rds_postgres_type | db.t2.micro | | This size is sufficient|
 |db_size | 20 |  | 20Gi is enough to hold the secrets|
-|rds_user| user | | Change the db user |
+|rds_user| clusteruser | | Change the db user |
 |rds_password| changeme | | Make a secure user password | 
 
 ## Internet connected box 

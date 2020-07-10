@@ -18,5 +18,5 @@ variable "ssh_public_key" {
 }
 variable "rds_postgres_type" { default = "db.t2.micro"}
 variable "db_size" { default = "20"}
-variable "rds_user" { default = "user"}
+variable "rds_user" { default = "clusteruser"}
 variable "rds_password" { default = "changeme"}

@@ -71,6 +71,11 @@ chmod +x $HOME/fences-terraform/setup.sh
 $HOME/fences-terraform/setup.sh
 ```
 
+## Step 2.1
+Fill out the variables.tf file. The above table has all the needed settings.
+```aidl
+cd $HOME/fences-terraform/ && vi variables.tf
+```
 ## Step 3 
 Create the Security groups
 ```aidl

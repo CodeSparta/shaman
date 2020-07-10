@@ -61,7 +61,7 @@ tar -vxf terraform-fences.tar.gz
 ```
 - Create a path for terraform to be run locally
 ```aidl
-sudo cp $HOME/fences-terraform/terraform-plugins/terraform /usr/local/bin/
+sudo cp $HOME/fences-terraform/terraform-plugins/bin/terraform /usr/local/bin/
 ```
 
 ## Step 2 

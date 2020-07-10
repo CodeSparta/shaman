@@ -41,6 +41,10 @@ provider "aws" {
 | master_count | 3 | 3| OCP default is set to 3 master nodes. |
 |subenet_list | None | subnet-xxx, subnet-xxx, subnet-xxx | These are the subnet ids for the 3 private subnets used for the OCP deployment in the VPC. |
 |ssh_public_key | None | rsa public key | A public key to be used for ssh configuration of the registry node |
+|rds_postgres_type | db.t2.micro | | This size is sufficient|
+|db_size | 20 |  | 20Gi is enough to hold the secrets|
+|rds_user| user | | Change the db user |
+|rds_password| changeme | | Make a secure user password | 
 
 ## Internet connected box 
 
@@ -104,6 +108,20 @@ cd $HOME/fences-terraform/control-plane/ && terraform init -plugin-dir="$HOME/.t
 
 cd $HOME/fences-terraform/control-plane/ && terraform apply -auto-approve 
 ```
+## Step 8
+If the p1 apps are being deployed a postgres database is required. The following modules will create a db-subnetgroup and create a postgres rds database
+
+```aidl
+cd $HOME/fences-terraform/rds-db-subnet/ && terraform init -plugin-dir="$HOME/.terraform.d/plugin-cache"
+
+cd $HOME/fences-terraform/rds-db-subnet/ && terraform apply -auto-approve 
+```
+
+```aidl
+cd $HOME/fences-terraform/postgres-rds/ && terraform init -plugin-dir="$HOME/.terraform.d/plugin-cache"
+
+cd $HOME/fences-terraform/postrgres-rds/ && terraform apply -auto-approve 
+```
 
 ## Destroy created resources 
 To destroy the created resources they have to be brought down in the following order:
@@ -118,5 +136,11 @@ cd $HOME/fences-terraform/elb/ && terraform destroy -auto-approve
 cd $HOME/fences-terraform/control-plane && terraform destroy -auto-approve
 cd $HOME/fences-terraform/Registry-node && terraform destroy -auto-approve
 cd $HOME/fences-terraform/Security-groups && terraform destroy -auto-approve
+```
+If the rds db was created:
+```aidl
+cd $HOME/fences-terraform/posgres-rds/ && terraform destroy -auto-approve
+cd $HOME/fences-terraform/rds-db-subnet/ && terraform destroy -auto-approve
+
 ```
 

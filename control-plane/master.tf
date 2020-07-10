@@ -21,7 +21,7 @@ resource "aws_instance" "master-nodes" {
   tags = merge(
   var.default_tags,
   map(
-    "Name", "${var.cluster_name}-master-$count.index}",
+    "Name", "${var.cluster_name}-master-${count.index}",
     "kubernetes.io/cluster/${var.cluster_name}", "owned"
     )
   )

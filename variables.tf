@@ -10,8 +10,13 @@ variable "cluster_domain" { default = "" }
 variable "master_count" { default = "3" }
 variable "subnet_list" {
   description = "AWS Private Subnets"
+  type = list(string)
   default = ["" , "" , "" ]
 }
 variable "_ssh_public_key" {
   default = ""
 }
+variable "rds_postgres_type" { default = "db.t2.micro"}
+variable "db_size" { default = "20"}
+variable "rds_user" { default = "user"}
+variable "rds_password" { default = "changeme"}

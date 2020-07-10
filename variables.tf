@@ -13,7 +13,7 @@ variable "subnet_list" {
   type = list(string)
   default = ["" , "" , "" ]
 }
-variable "_ssh_public_key" {
+variable "ssh_public_key" {
   default = ""
 }
 variable "rds_postgres_type" { default = "db.t2.micro"}

@@ -1,10 +1,3 @@
-data "aws_security_group" "master-sg" {
-  filter {
-    name   = "tag:Name"
-    values = [format("${var.cluster_name}-master-sg")]
-  }
-}
-
 resource "aws_instance" "bootstrap-node" {
   ami = var.rhcos_ami
   instance_type = var.ec2_type

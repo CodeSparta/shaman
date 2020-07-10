@@ -120,7 +120,7 @@ cd $HOME/fences-terraform/rds-db-subnet/ && terraform apply -auto-approve
 ```aidl
 cd $HOME/fences-terraform/postgres-rds/ && terraform init -plugin-dir="$HOME/.terraform.d/plugin-cache"
 
-cd $HOME/fences-terraform/postrgres-rds/ && terraform apply -auto-approve 
+cd $HOME/fences-terraform/postgres-rds/ && terraform apply -auto-approve 
 ```
 
 ## Destroy created resources 
@@ -139,7 +139,7 @@ cd $HOME/fences-terraform/Security-groups && terraform destroy -auto-approve
 ```
 If the rds db was created:
 ```aidl
-cd $HOME/fences-terraform/posgres-rds/ && terraform destroy -auto-approve
+cd $HOME/fences-terraform/postgres-rds/ && terraform destroy -auto-approve
 cd $HOME/fences-terraform/rds-db-subnet/ && terraform destroy -auto-approve
 
 ```

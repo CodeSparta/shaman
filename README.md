@@ -125,22 +125,24 @@ cd $HOME/fences-terraform/postgres-rds/ && terraform apply -auto-approve
 
 ## Destroy created resources 
 To destroy the created resources they have to be brought down in the following order:
-- ELB 
 - Control Plane
+- ELB 
 - Registry
 - Security groups
 
 The command to destroy the resources is terraform destroy
 ```aidl
-cd $HOME/fences-terraform/elb/ && terraform destroy -auto-approve
 cd $HOME/fences-terraform/control-plane && terraform destroy -auto-approve
+cd $HOME/fences-terraform/elb/ && terraform destroy -auto-approve
 cd $HOME/fences-terraform/Registry-node && terraform destroy -auto-approve
-cd $HOME/fences-terraform/Security-groups && terraform destroy -auto-approve
 ```
 If the rds db was created:
 ```aidl
 cd $HOME/fences-terraform/postgres-rds/ && terraform destroy -auto-approve
 cd $HOME/fences-terraform/rds-db-subnet/ && terraform destroy -auto-approve
-
+```
+The security groups are only destroyed once all other resources have been removed
+```aidl
+cd $HOME/fences-terraform/Security-groups && terraform destroy -auto-approve
 ```
 

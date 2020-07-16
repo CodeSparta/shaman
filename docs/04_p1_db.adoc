@@ -1,0 +1,16 @@
+== Step {counter:terraform} (P1 Application Database)
+If the p1 apps are being deployed a postgres database is required.
+The following modules will create a db-subnetgroup and create a postgres rds database
+
+[source, shell]
+----
+cd $HOME/fences-terraform/rds-db-subnet/ && terraform init -plugin-dir="$HOME/.terraform.d/plugin-cache"
+cd $HOME/fences-terraform/rds-db-subnet/ && terraform apply -auto-approve
+----
+
+[source, shell]
+----
+cd $HOME/fences-terraform/postgres-rds/ && terraform init -plugin-dir="$HOME/.terraform.d/plugin-cache"
+cd $HOME/fences-terraform/postgres-rds/ && terraform apply -auto-approve
+----
+

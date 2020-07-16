@@ -1,0 +1,54 @@
+== Step {counter:terraform}
+
+On the bastion box with the IAM aws role attached, unpack the archive
+containing the terraform scripts and binaries.
+
+[source, shell]
+----
+tar -vxf terraform-fences.tar.gz
+----
+
+Create a path for terraform to be run locally
+[source, shell]
+----
+sudo cp $HOME/fences-terraform/terraform-plugins/bin/terraform /usr/local/bin/
+----
+
+== Step {counter:terraform}
+
+[source, shell]
+----
+chmod +x $HOME/fences-terraform/setup.sh
+$HOME/fences-terraform/setup.sh
+----
+
+== Step {counter:terraform}
+
+Fill out the variables.tf file.
+The above table has all the needed settings.
+
+[source, shell]
+----
+cd $HOME/fences-terraform/ && vi variables.tf
+----
+
+== Step {counter:terraform}
+
+Create the Security groups
+
+[source, shell]
+----
+cd $HOME/fences-terraform/Security-groups/ && terraform init -plugin-dir="$HOME/.terraform.d/plugin-cache"
+cd $HOME/fences-terraform/Security-groups/ && terraform apply -auto-approve
+----
+
+== Step {counter:terraform}
+
+Create the registry node
+
+[source, shell]
+----
+cd $HOME/fences-terraform/Registry-node/ && terraform init -plugin-dir="$HOME/.terraform.d/plugin-cache"
+cd $HOME/fences-terraform/Registry-node/ && terraform apply -auto-approve
+----
+

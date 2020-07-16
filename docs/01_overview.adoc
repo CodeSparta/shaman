@@ -1,0 +1,120 @@
+== Fences Terraform Scipt Objectives
+
+Terraform is used to create the following:
+
+* Security-groups
+* elb
+* Registry-node
+* control-plane
+
+== Deployment Environment
+
+The bastion box assumes it has an IAM role with the ability to create the ec2 instances, ELB and security groups.
+If keys are being used the user will need to modify the `provider.tf` file to the following:
+
+.provider.tf
+[source,terraform]
+----
+provider "aws" {
+  access_key = "my-access-key"
+  secret_key = "my-secret-key"
+  region  = var.aws_region
+}
+----
+
+== Prereqs
+
+* VPC has been configured.
+* There are 3 Private subnets for AZ HA.
+* IAM roles have been created.
+* P1 and OCP bundle have been executed.
+* Public/Private SSH keypair is available
+
+Additionally, the values in the following table will need to be known for
+configuring the variables file.
+
+.Mandatory Terraform Variables
+|===
+| Variable   | Default | Example | Comments (type)
+
+| aws_region
+| None
+| us-east-1
+| This is the aws region
+
+| vpc_id
+| None
+| vpc-xxx
+| This is found under the description of your vpc on the aws console.
+
+| cluster_name
+| None
+| example
+| Set to the same as the vpc name in the p1 setup.
+
+| default_tags
+| None
+| None
+| Leave this blank.
+
+| private_vpc_cidr
+| None
+| 10.0.0.0/16
+| This is the IPv4 CIDR for the VPC
+
+| rhcos_ami
+| None
+| ami-abcdef
+| The RHCOS AMI ID
+
+| ec2_type
+| m5.xlarge
+| m5.xlarge
+| ec2 instance size, OCP 4 uses the m5.xlarge by default for the control plane creation.
+
+| volume_size
+| 120
+| 100
+| Default OCP size is 120Gi for volume.
+
+| cluster_domain
+| None
+| example.com
+| The default domain namespace for the OCP cluster, set in the p1 setup.
+
+| master_count
+| 3
+| 3
+| OCP default is set to 3 master nodes.
+
+|subenet_list
+| None
+| subnet-xxx, subnet-xxx, subnet-xxx
+| These are the subnet ids for the 3 private subnets used for the OCP deployment in the VPC.
+
+|ssh_public_key
+| None
+| rsa public key
+| A public key to be used for ssh configuration of the registry node
+
+|rds_postgres_type
+| db.t2.micro
+|
+| This size is sufficient
+
+|db_size
+| 20
+|
+| 20Gi is enough to hold the secrets
+
+|rds_user
+| clusteruser
+|
+| Change the db user
+
+|rds_password
+| changeme
+|
+| Make a secure user password
+|===
+

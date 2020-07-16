@@ -1,0 +1,14 @@
+// how to generate a deliverable bundle of the terraform scripts
+== Generating An Install Bundle
+To package these scripts for delivery to the install environment,
+the following guidance is provided.
+
+As the local user on an internet connected box, run the following:
+
+[source, shell]
+----
+git clone https://repo1.dsop.io/dsop/redhat/platformone/ocp4x/terraform/fences $HOME/terraform-fences
+tar -cvf terraform-fences.tar.gz $HOME/terraform-fences/
+----
+
+The generated `terraform-fences.tar.gz` file may now be transfered to the environment from which you will perform the install.

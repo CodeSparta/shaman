@@ -9,5 +9,6 @@ As the local user on an internet connected box, run the following:
 ----
 git clone https://repo1.dsop.io/dsop/redhat/platformone/ocp4x/terraform/fences $HOME/fences-terraform
 tar -cvf fences-terraform.tar.gz $HOME/fences-terraform
+----
 
 The generated `fences-terraform.tar.gz` file may now be transfered to the environment from which you will perform the install.

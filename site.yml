@@ -57,15 +57,6 @@
 #        - { mode: '600', name: "templates/aws/credentials.j2", dest: "{{ local_home }}/.aws/credentials"}
 
     ####### Symlinks
-    - name: '{{ ansible_name_module }} | Provider | Create Provider symlink'
-      file:
-        src: "{{ tf_module_path }}/provider.tf"
-        dest: "{{ item }}"
-        state: link
-      loop:
-        - "{{ tf_module_path }}/elb/provider.tf"
-        - "{{ tf_module_path }}/control-plane/provider.tf"
-
     - name: '{{ ansible_name_module }} | variable | Create variable symlink'
       file:
         src: "{{ tf_module_path }}/variables.tf"

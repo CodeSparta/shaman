@@ -36,7 +36,7 @@
       prompt: "Please enter your cluster domain. Example: example.com"
       private: no
     - name: subnet_list
-      prompt: "Please enter your Private subnet ids followed by a comma. Example: subnet-a, subnet-b, subnet-c"
+      prompt: 'Please enter your Private subnet ids in parentheses followed by a comma. Example: "subnet-a", "subnet-b", "subnet-c" '
       private: no
 
   tasks:
@@ -55,6 +55,25 @@
       loop:
         - { mode: '755', name: "templates/terraform/global.tfvars.j2", dest: "{{ tf_module_path }}/global.tfvars"}
         - { mode: '600', name: "templates/aws/credentials.j2", dest: "{{ local_home }}/.aws/credentials"}
+
+    ####### Symlinks
+    - name: '{{ ansible_name_module }} | Provider | Create Provider symlink'
+      file:
+        src: "{{ tf_module_path }}/provider.tf"
+        dest: "{{ item }}"
+        state: link
+      loop:
+        - "{{ tf_module_path }}/elb/provider.tf"
+        - "{{ tf_module_path }}/control-plane/provider.tf"
+
+    - name: '{{ ansible_name_module }} | variable | Create variable symlink'
+      file:
+        src: "{{ tf_module_path }}/variables.tf"
+        dest: "{{ item }}"
+        state: link
+      loop:
+        - "{{ tf_module_path }}/elb/variables.tf"
+        - "{{ tf_module_path }}/control-plane/variables.tf"
 
     ####### Terraform Init
     - name: '{{ ansible_name_module }} | shell | terraform init'

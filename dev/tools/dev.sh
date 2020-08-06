@@ -2,8 +2,8 @@
 clear
 #   --entrypoint bash \
 sudo podman run -it --rm \
-    --name devkit-vpc \
+    --name shaman \
     --entrypoint bash \
-    --workdir /root/deploy/terraform/devkit-vpc \
-    --volume $(pwd):/root/deploy/terraform/devkit-vpc:z \
+    --workdir /root/deploy/terraform/shaman \
+    --volume $(pwd):/root/deploy/terraform/shaman:z \
   docker.io/codesparta/konductor

@@ -1,0 +1,22 @@
+#!/usr/local/bin/ansible-playbook --inventory=inventory
+- name: ' Konductor | Shaman | Destroy'
+  hosts: local
+  vars:
+    module: "destroy"
+    state_provider: "local"
+    tf_module_path: "{{ dir_terraform }}/shaman"
+    ansible_name_module: " Konductor | Shaman| {{ module }}"
+  vars_files:
+    - vars/global.yml
+
+
+    - name: '{{ ansible_name_module }} | terraform | {{ module }}'
+      terraform:
+        project_path: "{{ item }}"
+        variables_file: "{{ tf_module_path }}/global.tfvars"
+        force_init: true
+        state: absent
+      loop:
+        - "{{ tf_module_path }}/elb"
+        - "{{ tf_module_path }}/control-plane"
+      register: tf_output

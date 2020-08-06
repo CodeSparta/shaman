@@ -66,14 +66,6 @@
         - "{{ tf_module_path }}/elb/variables.tf"
         - "{{ tf_module_path }}/control-plane/variables.tf"
 
-    ####### Terraform Init
-    - name: '{{ ansible_name_module }} | shell | terraform init'
-      shell: terraform init
-      loop:
-        - "{{ tf_module_path }}/elb"
-        - "{{ tf_module_path }}/control-plane"
-
-    #ToDo
     ####### Terraform Apply
     - name: '{{ ansible_name_module }} | terraform | apply'
       terraform:

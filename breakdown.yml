@@ -9,7 +9,7 @@
   vars_files:
     - vars/global.yml
 
-
+  tasks:
     - name: '{{ ansible_name_module }} | terraform | {{ module }}'
       terraform:
         project_path: "{{ item }}"

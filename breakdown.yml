@@ -17,6 +17,6 @@
         force_init: true
         state: absent
       loop:
-        - "{{ tf_module_path }}/elb"
         - "{{ tf_module_path }}/control-plane"
+        - "{{ tf_module_path }}/elb"
       register: tf_output

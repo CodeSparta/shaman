@@ -60,12 +60,8 @@
     - name: '{{ ansible_name_module }} | shell | terraform init'
       shell: terraform init
       loop:
-        - "{{ tf_module_path }}/Security-groups"
-        - "{{ tf_module_path }}/iam-roles"
-        - "{{ tf_module_path }}/route-53"
-        - "{{ tf_module_path }}/Registry-node"
+        - "{{ tf_module_path }}/elb"
         - "{{ tf_module_path }}/control-plane"
-        - "{{ tf_module_path }}/route-53"
 
     #ToDo
     ####### Terraform Apply
@@ -76,8 +72,6 @@
         force_init: true
         state: present
       loop:
-        - "{{ tf_module_path }}/Security-groups"
-        - "{{ tf_module_path }}/iam-roles"
-        - "{{ tf_module_path }}/route-53"
-        - "{{ tf_module_path }}/Registry-node"
+        - "{{ tf_module_path }}/elb"
+        - "{{ tf_module_path }}/control-plane"
       register: tf_output

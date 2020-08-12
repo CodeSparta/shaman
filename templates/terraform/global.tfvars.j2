@@ -1,0 +1,10 @@
+aws_region = "{{ cloud_region }}"
+cluster_name = "{{ cluster_name }}"
+aws_access_key = "{{ aws_access_key }}"
+aws_secret_key = "{{ aws_secret_key }}"
+vpc_id = "{{ vpc_id }}"
+private_vpc_cidr = "{{ private_vpc_cidr }}"
+rhcos_ami = "{{ rhcos_ami }}"
+cluster_domain = "{{ cluster_domain }}"
+ssh_public_key = "{{ lookup('env', 'HOME') }}/deploy/{{ cluster_domain }}/.ssh/id_rsa_{{ cluster_domain }}.pub"
+subnet_list = [{{ subnet_list }}]

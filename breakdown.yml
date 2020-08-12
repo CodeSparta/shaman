@@ -5,6 +5,7 @@
     module: "destroy"
     state_provider: "local"
     tf_module_path: "{{ dir_terraform }}/shaman"
+    vars_module_path: "{{ dir_terraform }}"
     ansible_name_module: " Konductor | Shaman| {{ module }}"
   vars_files:
     - vars/global.yml
@@ -13,8 +14,7 @@
     - name: '{{ ansible_name_module }} | terraform | {{ module }}'
       terraform:
         project_path: "{{ item }}"
-        variables_file: "{{ tf_module_path }}/global.tfvars"
-        force_init: true
+        variables_file: "{{ vars_module_path }}/global.tfvars"
         state: absent
       loop:
         - "{{ tf_module_path }}/control-plane"

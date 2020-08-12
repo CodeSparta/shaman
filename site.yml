@@ -10,52 +10,8 @@
     ansible_name_module: " Konductor | UPI | {{ module }}"
   vars_files:
     - vars/global.yml
-#
-#  vars_prompt:
-#    - name: cloud_region
-#      prompt: "Please enter your AWS region. Example: us-gov-west-1"
-#      private: no
-#    - name: cluster_name
-#      prompt: "Please enter your AWS VPC Name"
-#      private: no
-#    - name: aws_access_key
-#      prompt: "Please enter your AWS Access Key ID"
-#      private: no
-#    - name: aws_secret_key
-#      prompt: "Please enter your AWS Access Key Secret"
-#      private: no
-#    - name: vpc_id
-#      prompt: "Please enter your AWS VPC ID"
-#      private: no
-#    - name: private_vpc_cidr
-#      prompt: "Please enter your private vpc cidr. Example: 10.0.0.0/16"
-#      private: no
-#    - name: rhcos_ami
-#      prompt: "Please enter your RHCOS AMI id"
-#      private: no
-#    - name: cluster_domain
-#      prompt: "Please enter your cluster domain. Example: example.com"
-#      private: no
-#    - name: subnet_list
-#      prompt: 'Please enter your Private subnet ids in parentheses followed by a comma. Example: "subnet-a", "subnet-b", "subnet-c" '
-#      private: no
 
   tasks:
-
-    - name: '{{ ansible_name_module }} | file | Create ~/.aws'
-      file:
-        path: "/root/.aws"
-        state: directory
-
-#    ####### Stage Variables & AWS Creds
-#    - name: '{{ ansible_name_module }} | template | Terraform Vars & aws credentials'
-#      template:
-#        src: "{{ item.name }}"
-#        dest: "{{ item.dest }}"
-#        mode: "{{ item.mode }}"
-#      loop:
-#        - { mode: '755', name: "templates/terraform/global.tfvars.j2", dest: "{{ tf_module_path }}/global.tfvars"}
-#        - { mode: '600', name: "templates/aws/credentials.j2", dest: "{{ local_home }}/.aws/credentials"}
 
     ####### Symlinks
     - name: '{{ ansible_name_module }} | variable | Create variable symlink'
@@ -66,6 +22,13 @@
       loop:
         - "{{ tf_module_path }}/elb/variables.tf"
         - "{{ tf_module_path }}/control-plane/variables.tf"
+
+    ####### Terraform Init
+    - name: '{{ ansible_name_module }} | shell | terraform init'
+      shell: terraform init
+      loop:
+        - "{{ tf_module_path }}/elb"
+        - "{{ tf_module_path }}/control-plane"
 
     ####### Terraform Apply
     - name: '{{ ansible_name_module }} | terraform | apply'

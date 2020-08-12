@@ -1,23 +1,33 @@
-variable "aws_region" { default = "" }
+// VPC ID
 variable "vpc_id" { default = "" }
-variable "cluster_name" { default = "" }
-variable "cluster_domain" { default = "" }
 variable "private_vpc_cidr" {default = "" }
+
+// Rhcos AMI ID
 variable "rhcos_ami" { default = "" }
-variable "aws_access_key" { default = "" }
-variable "aws_secret_key" { default = "" }
 
-variable "ec2_type" { default = "m5.xlarge" }
-variable "volume_size" { default = "120" }
-variable "default_tags" { default = {} }
-variable "master_count" { default = "3" }
+// Cluster name "sparta"
+variable "cluster_name" { default = "" }
 
+// Domain name, "example.com"
+variable "cluster_domain" { default = "" }
+
+// Private subnet List
 variable "subnet_list" {
   description = "AWS Private Subnets"
   type = list(string)
   default = ["" , "" , "" ]
 }
-variable "ssh_public_key" {
-  default = ""
-}
 
+// Leave all values below this point as defaults
+
+// Default ec2 properties per RedHat offical minimum requirements
+variable "ec2_type" { default = "m5.xlarge" }
+variable "volume_size" { default = "120" }
+variable "default_tags" { default = {} }
+variable "master_count" { default = "3" }
+
+
+// Leave empty, secrets are configured via the setup ansible tasks
+variable "aws_access_key" { default = "" }
+variable "aws_secret_key" { default = "" }
+variable "aws_region" { default = "" }

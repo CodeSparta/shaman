@@ -18,8 +18,6 @@ variable "subnet_list" {
   default = ["" , "" , "" ]
 }
 
-// Leave all values below this point as defaults
-
 // Default ec2 properties per RedHat offical minimum requirements
 variable "ec2_type" { default = "m5.xlarge" }
 variable "volume_size" { default = "120" }

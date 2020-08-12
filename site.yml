@@ -13,6 +13,21 @@
 
   tasks:
 
+    - name: '{{ ansible_name_module }} | file | Create ~/.aws'
+      file:
+        path: "/root/.aws"
+        state: directory
+
+          ####### Stage Variables & AWS Creds
+    - name: '{{ ansible_name_module }} | template | Terraform Vars & aws credentials'
+      template:
+        src: "{{ item.name }}"
+        dest: "{{ item.dest }}"
+        mode: "{{ item.mode }}"
+      loop:
+        - { mode: '755', name: "templates/terraform/global.tfvars.j2", dest: "{{ tf_module_path }}/global.tfvars"}
+        - { mode: '600', name: "templates/aws/credentials.j2", dest: "{{ local_home }}/.aws/credentials"}
+
     ####### Symlinks
     - name: '{{ ansible_name_module }} | variable | Create variable symlink'
       file:

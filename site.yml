@@ -6,9 +6,10 @@
     module: "build"
     state_provider: "local"
     tf_module_path: "{{ dir_terraform }}/shaman"
+    vars_module_path: "{{ dir_terraform }}"
     ansible_name_module: " Konductor | UPI | {{ module }}"
-#  vars_files:
-#    - vars/global.yml
+  vars_files:
+    - vars/global.yml
 #
 #  vars_prompt:
 #    - name: cloud_region
@@ -70,8 +71,7 @@
     - name: '{{ ansible_name_module }} | terraform | apply'
       terraform:
         project_path: "{{ item }}"
-        variables_file: "{{ tf_module_path }}/global.tfvars"
-        force_init: true
+        variables_file: "{{ vars_module_path }}/global.tfvars"
         state: present
       loop:
         - "{{ tf_module_path }}/elb"

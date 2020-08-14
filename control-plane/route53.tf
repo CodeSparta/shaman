@@ -13,7 +13,7 @@ resource "aws_route53_record" "etcd_a_nodes" {
   count = var.control_plane.count
   type    = "A"
   ttl     = "60"
-  zone_id = data.aws_route53_zone.zone.id
+  zone_id = data.aws_route53_zone.zone_id
   name    = "etcd-${count.index}.${var.cluster_name}.${var.cluster_domain}"
   records = ["${aws_instance.master-nodes[count.index].private_ip}"]
   allow_overwrite = true

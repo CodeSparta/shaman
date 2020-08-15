@@ -1,0 +1,21 @@
+#!/usr/local/bin/ansible-playbook
+- name: openshift-ingress
+  hosts: localhost
+  tasks:
+    - name: openshift-ingress | openshift-ingress operator deployment
+      block:
+        - name: openshift-ingress | Wait for loadbalancer to be created
+          until:
+
+        - name: openshift-ingress | Collect Name of the loadbalancer
+
+        - set_fact:
+            apps_ingress: "{{ }}"
+
+    - name: openshift-ingress | Terraformify
+      block:
+        - name: openshift-ingress | Terraform Init ingress module
+          terraform:
+            project_path: 
+            force_init: true
+

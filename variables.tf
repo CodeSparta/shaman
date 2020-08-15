@@ -9,7 +9,7 @@ variable "rhcos_ami" { default = "" }
 variable "cluster_name" { default = "" }
 
 // Domain name, "example.com"
-variable "cluster_domain" { default = ".io" }
+variable "cluster_domain" { default = "" }
 
 // Private subnet List
 variable "subnet_list" {

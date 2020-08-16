@@ -57,7 +57,3 @@ resource "aws_lb_target_group" "control_plane_int_22623" {
   vpc_id =  "${var.vpc_id}"
   deregistration_delay = 60
 }
-
-
-
-

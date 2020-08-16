@@ -1,0 +1,37 @@
+#!/usr/local/bin/ansible-playbook
+- name: openshift-ingress
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: openshift_ingress | Collect VPC Information
+      block:
+        - name: aws_import | Collect VPC Information | VPC_ID
+          ec2_vpc_net_info:
+            filters:
+              "tag:Name": "{{ cluster_name }}"
+          register: clustervpc
+        - set_fact:
+            vpc_id: "{{ clustervpc.vpcs[0].id }}"
+
+    - name: openshift-ingress | Collect openshift-ingress-operator loadbalancer Information
+      block:
+        - name: openshift-ingress | Wait for loadbalancer to be created
+          until:
+
+        - name: openshift_ingress | Collect ingress loadbalancer name
+          elb_classic_lb_info:
+          register: elbinfo
+
+        - set_fact:
+            elb_tags: "{{ elbinfo.elbs[0].tags | list }}"
+        - set_fact:
+            elb_name: "{{ elbinfo.elbs[0].dns_name }}"
+          when: vpc_id == elbinfo.elbs[0].vpc_id and cluster_name in elb_tags[0] and 'service' in elb_tags[1]
+
+
+    - name: openshift-ingress | Terraformify
+      block:
+        - name: openshift-ingress | Terraform Init ingress module
+          terraform:
+            project_path: 
+            force_init: true

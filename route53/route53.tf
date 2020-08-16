@@ -7,7 +7,7 @@ resource "aws_route53_record" "api-int" {
 }
 
 resource "aws_route53_record" "api" {
-  name = "api-int.${data.aws_route53_zone.private_zone.name}"
+  name = "api.${data.aws_route53_zone.private_zone.name}"
   type = "CNAME"
   zone_id = data.aws_route53_zone.private_zone.id
   records = [data.terraform_remote_state.elb.outputs.control_plane_int]

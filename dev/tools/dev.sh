@@ -1,9 +1,7 @@
 #!/bin/bash -x
 clear
-#   --entrypoint bash \
 sudo podman run -it --rm \
-    --name shaman \
-    --entrypoint bash \
-    --workdir /root/deploy/terraform/shaman \
-    --volume $(pwd):/root/deploy/terraform/shaman:z \
-  docker.io/codesparta/konductor
+    --name shaman -h shaman --entrypoint bash \
+    --volume $(pwd):/root/platform/iac/shaman:z \
+    --workdir /root/platform/iac/shaman \
+  docker.io/containercraft/konductor

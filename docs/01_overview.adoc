@@ -1,38 +1,4 @@
-== Fences Terraform Scipt Objectives
-
-Terraform is used to create the following:
-
-* Security-groups
-* elb
-* Registry-node
-* control-plane
-
-== Deployment Environment
-
-The bastion box assumes it has an IAM role with the ability to create the ec2 instances, ELB and security groups.
-If keys are being used the user will need to modify the `provider.tf` file to the following:
-
-.provider.tf
-[source,terraform]
-----
-provider "aws" {
-  access_key = "my-access-key"
-  secret_key = "my-secret-key"
-  region  = var.aws_region
-}
-----
-
-== Prereqs
-
-* VPC has been configured.
-* There are 3 Private subnets for AZ HA.
-* IAM roles have been created.
-* P1 and OCP bundle have been executed.
-* Public/Private SSH keypair is available
-
-Additionally, the values in the following table will need to be known for
-configuring the variables file.
-
+== Fences Terraform Scipt Objectives Terraform is used to create the following: * Security-groups * elb * Registry-node * control-plane == Deployment Environment The bastion box assumes it has an IAM role with the ability to create the ec2 instances, ELB and security groups.  If keys are being used the user will need to modify the `provider.tf` file to the following: .provider.tf [source,terraform] ---- provider "aws" { access_key = "my-access-key" secret_key = "my-secret-key" region  = var.aws_region } ---- == Prereqs * VPC has been configured.  * There are 3 Private subnets for AZ HA.  * IAM roles have been created.  * P1 and OCP bundle have been executed.  * Public/Private SSH keypair is available Additionally, the values in the following table will need to be known for configuring the variables file.  
 .Mandatory Terraform Variables
 |===
 | Variable   | Default | Example | Comments (type)

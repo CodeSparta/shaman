@@ -22,7 +22,7 @@ dir_ansible: "{{ dir_platform }}/ansible"
 dir_secrets: "{{ dir_platform }}/secrets"
 
 # Terraform Variables
-dir_terraform: "{{ dir_platform }}/terraform"
+dir_terraform: "{{ dir_iac }}"
 tf_vars: "{{ dir_terraform }}/global.tfvars"
 
 # Hosts Environment

@@ -3,7 +3,7 @@ resource "aws_instance" "master-nodes" {
   instance_type = var.ec2_type
   count = var.master_count
   subnet_id = var.subnet_list[count.index]
-  user_data = "{\"ignition\":{\"config\":{\"append\":[{\"source\":\"http://registry.${var.cluster_domain}:8080/master.ign\",\"verification\":{}}]},\"security\":{},\"timeouts\":{},\"version\":\"2.2.0\"},\"networkd\":{},\"passwd\":{},\"storage\":{},\"systemd\":{}}"
+  user_data = "{\"ignition\": {\"version\": \"3.1.0\",\"config\": {\"replace\": {\"source\": \"http://registry.${var.cluster_domain}:8080/master.ign\",\"verification\"::{}}}}}"
 
   iam_instance_profile = "${var.cluster_name}-master-profile"
 

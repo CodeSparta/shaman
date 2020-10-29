@@ -2,7 +2,7 @@ resource "aws_instance" "bootstrap-node" {
   ami = var.rhcos_ami
   instance_type = var.ec2_type
   subnet_id = var.subnet_list[0]
-  user_data = "{\"ignition\":{\"config\":{\"append\":[{\"source\":\"http://registry.${var.cluster_domain}:8080/bootstrap.ign\",\"verification\":{}}]},\"security\":{},\"timeouts\":{},\"version\":\"2.2.0\"},\"networkd\":{},\"passwd\":{},\"storage\":{},\"systemd\":{}}"
+  user_data = "{\"ignition\": {\"version\": \"3.1.0\",\"config\": {\"replace\": {\"source\": \"http://registry.${var.cluster_domain}:8080/bootstrap.ign\",\"verification\"::{}}}}}"
 
   iam_instance_profile = "${var.cluster_name}-master-profile"
 

@@ -4,4 +4,4 @@ sudo podman run -it --rm \
     --name shaman -h shaman--entrypoint bash \
     --volume $(pwd):/root/platform/iac/shaman:z \
     --workdir /root/platform/iac/shaman \
-  quay.io/cloudctl/konductor
+  docker.io/cloudctl/konductor

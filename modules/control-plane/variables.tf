@@ -1,10 +1,6 @@
 // VPC ID
 variable "vpc_id" { default = "" }
-variable "private_vpc_cidr" {default = "" }
-
-
-// CIDR Blocks
-variable "cidr_blocks" { default = "10.0.0.0/16" }
+variable "private_vpc_cidr" { default = "" }
 
 // VPC NAME
 variable "vpc_name" { default = "" }
@@ -27,8 +23,8 @@ variable "name_domain" { default = "" }
 // Private subnet List
 variable "subnet_list" {
   description = "AWS Private Subnets"
-  type = list(string)
-  default = ["" , "" , "" ]
+  type        = list(string)
+  default     = [""]
 }
 
 // Default ec2 properties per RedHat offical minimum requirements

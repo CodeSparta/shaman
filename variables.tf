@@ -15,7 +15,7 @@ variable "cluster_domain" { default = "" }
 variable "subnet_list" {
   description = "AWS Private Subnets"
   type = list(string)
-  default = ["" , "" , "" ]
+  default = [""]
 }
 
 // Default ec2 properties per RedHat offical minimum requirements

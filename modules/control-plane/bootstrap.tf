@@ -1,8 +1,8 @@
 resource "aws_instance" "bootstrap-node" {
-  ami = var.rhcos_ami
+  ami           = var.rhcos_ami
   instance_type = var.ec2_type
-  subnet_id = var.subnet_list[0]
-  user_data = "{\"ignition\": {\"version\": \"3.1.0\",\"config\": {\"replace\": {\"source\": \"http://registry.${var.cluster_domain}:8080/bootstrap.ign\",\"verification\":{}}}}}"
+  subnet_id     = var.subnet_list[0]
+  user_data     = "{\"ignition\": {\"version\": \"3.1.0\",\"config\": {\"replace\": {\"source\": \"http://registry.${var.cluster_domain}:8080/bootstrap.ign\",\"verification\":{}}}}}"
 
   iam_instance_profile = "${var.cluster_name}-master-profile"
 
@@ -11,10 +11,10 @@ resource "aws_instance" "bootstrap-node" {
   vpc_security_group_ids = [data.aws_security_group.master-sg.id]
 
   tags = merge(
-  var.default_tags,
-  map(
-    "Name", "${var.cluster_name}-bootstrap-node",
-    "kubernetes.io/cluster/${var.cluster_name}", "owned"
+    var.default_tags,
+    map(
+      "Name", "${var.cluster_name}-bootstrap-node",
+      "kubernetes.io/cluster/${var.cluster_name}", "owned"
     )
   )
 }

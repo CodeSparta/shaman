@@ -10,15 +10,15 @@
     ansible_name_module: " Konductor | UPI | {{ module }}"
   vars_files:
     - vars/global.yml
+    - vars/shaman.yml
 
   tasks:
-
     - name: '{{ ansible_name_module }} | file | Create ~/.aws'
       file:
         path: "/root/.aws"
         state: directory
 
-          ####### Stage Variables & AWS Creds
+    ####### Stage Variables & AWS Creds
     - name: '{{ ansible_name_module }} | template | Terraform Vars & aws credentials'
       template:
         src: "{{ item.name }}"
@@ -26,14 +26,8 @@
         mode: "{{ item.mode }}"
       loop:
         - { mode: '755', name: "templates/terraform/global.tfvars.j2", dest: "{{ tf_module_path }}/global.tfvars"}
+        - { mode: '644', name: "templates/terraform/main.tf.j2", dest: "{{ tf_module_path }}/main.tf"}
         - { mode: '600', name: "templates/aws/credentials.j2", dest: "{{ local_home }}/.aws/credentials"}
-
-    ####### Terraform Init
-    - name: '{{ ansible_name_module }} | shell | terraform init'
-      shell: terraform init
-      loop:
-        - "{{ tf_module_path }}/elb"
-        - "{{ tf_module_path }}/control-plane"
 
     ####### Terraform Apply
     - name: '{{ ansible_name_module }} | terraform | apply'
@@ -41,7 +35,3 @@
         project_path: "{{ item }}"
         variables_file: "{{ vars_module_path }}/global.tfvars"
         state: present
-      loop:
-        - "{{ tf_module_path }}/elb"
-        - "{{ tf_module_path }}/control-plane"
-      register: tf_output

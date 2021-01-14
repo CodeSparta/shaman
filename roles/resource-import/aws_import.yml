@@ -1,0 +1,36 @@
+#!/usr/local/bin/ansible-playbook
+- name: aws_import
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: aws_import | Collect existing resource information from Cloud environment
+      block:
+        - name: aws_import | Collect VPC Information | VPC_ID
+          ec2_vpc_net_info:
+            filters:
+              "tag:Name": "{{ cluster_name }}"
+          register: clustervpc
+
+        - set_fact:
+            vpc_id: "{{ clustervpc.vpcs[0].id }}"
+
+        - name: aws_import | Collect ROUTE53 zone Information | ROUTE53_ZONE_ID
+          route53_zone:
+            zone: "{{ cluster_domain }}"
+            vpc_id: "{{ vpc_id }}"
+            vpc_region: "{{ cloud_region }}"
+            comment: Managed by Terraform
+          register: zone
+
+        - set_fact:
+            route53_zone_id: "{{ zone.zone_id }}"
+
+    - name: aws_import | Import resources into Terraform
+      block:
+        - name: "aws_import | Import VPC | {{ vpc_id }}"
+          shell:
+            "terraform import aws_vpc.cluster_vpc {{ vpc_id }}"
+
+        - name: "aws_import | Import route53 zone | {{ route53_zone_id }}"
+          shell:
+            "terraform import aws_route53_zone.private_zone {{ route53_zone_id }}"

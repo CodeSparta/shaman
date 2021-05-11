@@ -7,10 +7,10 @@ resource "aws_lb" "control_plane_int" {
 
 tags =  merge(
 var.default_tags,
-  map(
-    "kubernetes.io/cluster/${var.cluster_name}", "shared",
-    "Name", "${var.cluster_name}-int"
-    )
+  {
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared",
+    Name = "${var.cluster_name}-int"
+   }
   )
 }
 
@@ -42,7 +42,13 @@ resource "aws_lb_target_group" "control_plane_int_6443" {
   name =  "${var.cluster_name}-6443-int-tg"
   port = 6443
   protocol = "TCP"
-  tags =  var.default_tags
+tags =  merge(
+var.default_tags,
+  {
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared",
+    Name = "${var.cluster_name}-int"
+   }
+  )
   target_type = "ip"
   vpc_id =  "${var.vpc_id}"
   deregistration_delay = 60
@@ -52,7 +58,13 @@ resource "aws_lb_target_group" "control_plane_int_22623" {
   name =  "${var.cluster_name}-22623-int-tg"
   port = 22623
   protocol = "TCP"
-  tags =  var.default_tags
+tags =  merge(
+var.default_tags,
+  {
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared",
+    Name = "${var.cluster_name}-int"
+   }
+  )
   target_type = "ip"
   vpc_id =  "${var.vpc_id}"
   deregistration_delay = 60

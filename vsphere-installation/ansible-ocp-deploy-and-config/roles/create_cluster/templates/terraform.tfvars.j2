@@ -1,0 +1,63 @@
+# Cluster configuration
+vsphere_user				= "{{ vcenter_user }}"
+vsphere_password			= "{{ vcenter_passwd }}"
+vsphere_server				= "{{ vcenter_server }}"
+folder 					= "{{ folder }}"
+guest_id                                = "{{ guest_id }}"
+datacenter_id                           = "{{ datacenter }}"
+datastore_id                            = "{{ datastore }}"
+resource_pool_id                        = "{{ resource_pool_id }}"
+network_id                              = "{{ network_id }}"
+network_adapter_type                    = "{{ network_adapter_type }}"
+rhcos_template				= "{{ rhcos_template }}"
+disk_thin_provisioned                   = "{{'true' if disk_thin_provisioned|bool or disk_thin_provisioned == 'true' else 'false' }}"
+{% if disk_size %}
+disk_size = {
+  {% for item in disk_size  %}
+  "{{ item.name  }}" = "{{ item.value }}"
+  {% endfor %}
+}
+{% endif %}
+{% if num_cpus %}
+num_cpus = {
+  {% for item in num_cpus  %}
+  "{{ item.name  }}" = "{{ item.value }}"
+  {% endfor %}
+}
+{% endif %}
+{% if memory %}
+memory = {
+  {% for item in memory  %}
+  "{{ item.name  }}" = "{{ item.value }}"
+  {% endfor %}
+}
+{% endif %}
+
+append_bootstrap_ign_path		= "{{ install_dir }}/append-bootstrap.ign"
+master_ignition_path			= "{{ install_dir }}/master.ign"
+worker_ignition_path    		= "{{ install_dir }}/worker.ign"
+ovf_url                                 = "http://{{ webserver_url }}/{{ ova_file }}"
+
+dns_address				= "{{ dns_address }}"
+gateway                                 = "{{ gateway }}"
+netmask                                 = "{{ netmask }}"
+
+bootstrap_complete = "{{ bootstrap_complete }}"
+
+bootstrap          = "{{ bootstrap }}"
+masters = {
+  {% for item in masters %}
+  "{{ item.name }}" = "{{ item.ip }}"
+  {% endfor %}
+}
+infras = {
+  {% for item in infras %}
+  "{{ item.name }}" = "{{ item.ip }}"
+  {% endfor %}
+}
+workers = {
+  {% for item in workers %}
+  "{{ item.name }}" = "{{ item.ip }}"
+  {% endfor %}
+}
+

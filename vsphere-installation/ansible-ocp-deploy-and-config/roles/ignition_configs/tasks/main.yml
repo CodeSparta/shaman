@@ -1,0 +1,62 @@
+---
+- name: Check if installation directory with backup and ssl exists
+  stat: 
+    path: "{{ install_dir }}/{{ item }}"
+  register: stat_result
+  loop:
+    - bak
+    - auth
+    - .ssh
+
+- name: Exit if install directory exists
+  fail: 
+    msg: "The installation directory already exists, consider creating a new directory if you're adding a new cluster. If you're adding nodes, only use the create_cluster role."
+  when: stat_result.stat.exists is defined and stat_result.stat.exists
+
+- name: Create installation directory with backup and ssl
+  file:
+    path: "{{ install_dir }}/{{ item }}"
+    state: directory
+    recurse: yes
+  loop:
+    - bak
+    - auth
+    - .ssh
+  
+- name: Generate ssh keys for core user
+  openssh_keypair:
+    path: '{{ install_dir }}/.ssh/id_rsa'
+    comment: 'core@{{ domain_name }}'
+    state: present
+    force: no
+
+- name: Capture ssh
+  slurp:
+    src: "{{ install_dir }}/.ssh/id_rsa.pub"
+  register: id_rsa
+
+- name: Load ssh var
+  set_fact:
+    ssh_key: "{{ id_rsa.content | b64decode }}"
+
+- name: Create temp dir
+  tempfile:
+    state: directory
+    suffix: ocp_temp
+  register: temp_dir
+
+- name: Create configs
+  include_tasks: create_ignitions.yml
+
+- name: Copy ignition config files to httpd
+  copy: 
+    src: '{{ install_dir }}/{{ item }}'
+    dest: '{{ html_path }}'
+    remote_src: yes
+    force: yes
+  loop:
+    - bootstrap.ign
+    - master.ign
+    - worker.ign
+    - append-bootstrap.ign
+  when: use_httpd

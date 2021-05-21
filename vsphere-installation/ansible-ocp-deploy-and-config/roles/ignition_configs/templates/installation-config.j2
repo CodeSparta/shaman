@@ -1,0 +1,33 @@
+apiVersion: v1
+baseDomain: {{ domain_name }}
+compute:
+- name: worker
+  hyperthreading: Enabled
+  replicas: 0
+controlPlane:
+  hyperthreading: Enabled
+  name: master
+  replicas: 3
+metadata:
+  name: {{ cluster_name }}
+platform:
+  vsphere:
+    vcenter: {{ vcenter_server }}
+    username: {{ vcenter_user }}
+    password: {{ vcenter_passwd }}
+    datacenter: {{ datacenter }}
+    defaultDatastore: {{ datastore }}
+    folder: /{{ datacenter }}/vm/{{ folder }}
+fips: {{ fips_compliant }}
+publish: External
+pullSecret: '{"auths":{"{{ local_registry }}": {"auth": "{{ (mirror_registry_user + ':' + mirror_registry_passwd) | b64encode}}","email": "{{ pullsecret_email }}"}}}'
+sshKey: '{{ ssh_key[:-1] }}'
+additionalTrustBundle: |
+  {{ trust_bundle | indent (width=2)}} 
+imageContentSources:
+- mirrors:
+  - '{{ local_registry }}/openshift-release-dev'
+  source: quay.io/openshift-release-dev/ocp-release
+- mirrors:
+  - '{{ local_registry }}/openshift-release-dev'
+  source: quay.io/openshift-release-dev/ocp-v4.0-art-dev

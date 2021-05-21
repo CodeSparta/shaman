@@ -1,0 +1,44 @@
+---
+- name: Approve all csrs
+  block: 
+    - name: Set retry count
+      set_fact: 
+        retry_count: "{{ 0 if retry_count is undefined else retry_count|int + 1 }}"
+
+    - name: Approve existing pending CSRs
+      shell: | 
+        for i in `$(which oc) get csr --no-headers | grep -i pending | awk '{ print $1 }'`; do 
+          $(which oc) adm certificate approve $i; 
+        done
+      environment:
+        KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+    - wait_for:
+        timeout: 30 
+
+    - name: Check for new CSRs
+      command: "oc get csr --no-headers | grep -i pending | wc -l"
+      environment:
+        KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+      register: num_csrs
+      failed_when: num_csrs.stdout|int > 0
+
+    - name: Check all approved
+      shell: "oc get csr --no-headers | grep -i Approved | wc -l"
+      environment:
+        KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+      register: num_approved_csrs
+      failed_when: num_approved_csrs.stdout|int < 2* (masters|length + infras|length + workers|length )
+
+    - name: Number of CSRs approved
+      debug:
+        msg: "{{ num_approved_csrs.stdout }} and {{ 2* (masters|length + infras|length + workers|length ) }}"
+      # name: "Exit"
+      # set_fact:
+      #  retry_count: 5
+      #when: num_approved_csrs < 2* (masters|length + infras|length + workers|length )
+  
+  rescue: 
+    - fail:
+      when: retry_count|int == 10
+    - include_tasks: approve_csrs.yml

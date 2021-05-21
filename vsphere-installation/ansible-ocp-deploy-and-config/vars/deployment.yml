@@ -1,0 +1,121 @@
+---
+####### Openshift Deployment Vars #######
+mirror_registry_user: "{{ vault_registry_admin_username }}"
+mirror_registry_passwd: "{{ vault_registry_admin_password }}"
+cluster_name: "ocpcluster"
+domain_name: "dev.com"
+install_name: "4.7.6-cluster-take-2"
+install_dir: "/home/{{ ansible_env.USER }}/{{ install_name }}"
+local_registry: "{{ vault_registry_host_fqdn }}:{{ vault_registry_host_port }}"
+pullsecret_email: "admin@dev.com"
+base64_creds: "{{ (mirror_registry_user + ':' + mirror_registry_passwd) | b64encode }}"
+pull_secret: '{"auths":{"{{ local_registry }}": {"auth": "{{ base64_creds }}","email": "{{ pullsecret_email }}"}}}'
+webserver_url: "10.1.1.58:8080"
+#fips_compliant: false           //Default is true
+## Vcenter Information
+datacenter: DEV.COM
+datastore: Int-Datastore-Test
+vcenter_server: ocp-vcs01.dev.com
+#vcenter_passwd: ''
+#vcenter_user: ''
+ 
+#Nginx vars
+use_httpd: true
+html_path: "/var/www/html"
+ 
+#Terraform vars
+terraform_dir : "../terraform"
+ 
+# Cluster configuration
+folder: "morning0305_test_folder"
+guest_id: "coreos64Guest"
+resource_pool_id: "OCP/Resources"
+network_id: "pg_vmtraffic730"
+network_adapter_type: "vmxnet3"
+disk_thin_provisioned: false
+disk_size: 
+  - name: "master"
+    value: 200
+  - name: "worker"
+    value: 200
+  - name: "infra"
+    value: 200
+memory:
+  - name: "master"
+    value: 32768
+  - name: "worker"
+    value: 32768
+  - name: "infra"
+    value: 65536
+num_cpus:
+  - name: "master"
+    value: 8
+  - name: "worker"
+    value: 8
+  - name: "infra"
+    value: 8
+
+ova_file: "rhcos-vmware.x86_64.ova"
+
+dns_address: "nameserver=10.1.1.57"
+gateway: "10.1.1.1"
+netmask: "255.255.255.0"
+
+bootstrap: "10.1.1.55"
+masters:
+  - name: "master0" 
+    ip:  "10.1.1.60"
+  - name: "master1"
+    ip: "10.1.1.61"
+  - name: "master2"
+    ip: "10.1.1.62"
+infras:
+  - name: "infra0" 
+    ip:  "10.1.1.70"
+  - name: "infra1"
+    ip: "10.1.1.71"
+  - name: "infra2"
+    ip: "10.1.1.72"
+workers:
+  - name: "worker0" 
+    ip:  "10.1.1.63"
+  - name: "worker1"
+    ip: "10.1.1.64"
+  - name: "worker2"
+    ip: "10.1.1.65"
+
+trust_bundle: |
+  -----BEGIN CERTIFICATE-----
+  MIIFwzCCA6ugAwIBAgIUX1TB5CEDi3MI9ZscbnS/oOfc3X8wDQYJKoZIhvcNAQEL
+  BQAwcTELMAkGA1UEBhMCVVMxETAPBgNVBAgMCENvbG9yYWRvMRkwFwYDVQQHDBBD
+  b2xvcmFkbyBTcHJpbmdzMREwDwYDVQQKDAhSYXl0aGVvbjEhMB8GA1UEAwwYcmVn
+  aXN0cnkub2NwMDEuZGV2LmZvcmdlMB4XDTIxMDQwOTExNDIxMFoXDTIyMDQwOTEx
+  NDIxMFowcTELMAkGA1UEBhMCVVMxETAPBgNVBAgMCENvbG9yYWRvMRkwFwYDVQQH
+  DBBDb2xvcmFkbyBTcHJpbmdzMREwDwYDVQQKDAhSYXl0aGVvbjEhMB8GA1UEAwwY
+  cmVnaXN0cnkub2NwMDEuZGV2LmZvcmdlMIICIjANBgkqhkiG9w0BAQEFAAOCAg8A
+  MIICCgKCAgEAqLlfYJvKS2fgKSriuQWL2gfuxqMpYj+qR5dzwJ+yTtPN8Xn+Ptk1
+  bqIn5DDn7027aK4+kTXL03X0DZ3HfSXbhnvtWQQF95VoqPQ0PI0XbSc31QXBx9LU
+  yICKAkolMF6h1jn3+8PMdMQ2R+MQLBfWk/m5PwfQd2WQlTwBXbC+mJhkQCkhh1ow
+  zUrQ3GMP0FSWUAlPAVz3uneTGWxhj3LY/eA8eCUyWwvAuzWWMQ89XUTFc27qmL25
+  MKFCbluEp3mtyhTTpPvd2ExHhRugIJFHgMD2HeA3kpziwc7eI/GpUC8X1u+f+ueS
+  n2M7+5+NDs8WrUA2AJ+n3vwNdL+Sedc5SkjP3ajCXjsKEg4zRT4LP/UhC2xxYTSt
+  vjadjD9wIrfiVlDzo2RDE88+lZrQ8/rrBPosKSm6yx2wy82k0aMC6ZcNx2CiE5m+
+  c/T4vtIbTyeIxjo92f+/O+wtTTPF7uIRvSgkryITOQW6IG+zTBdu8h/FCAPHKMaJ
+  wC1n+vYjwBDR+5BCicsU9acct7usa7EiqWq1x301whwCdiDEm6yct/NELboO+tcR
+  g7/Wz/pUpaDCs29n840lg0Vh2RmAgHFouE7SOxVvGiDuYM22WU1FNRuZh0/alIkq
+  mfMonKS1KhJnTk2u8IcfBeClhVaBx2SiG6P0G7w+4TSS3AaeshfCndECAwEAAaNT
+  MFEwHQYDVR0OBBYEFKWQnPuWhRQFN7GPSde0/wUnhpmoMB8GA1UdIwQYMBaAFKWQ
+  nPuWhRQFN7GPSde0/wUnhpmoMA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQEL
+  BQADggIBAFskEFk/OqgBTv2cYjrgtcnwEQvqGYNe2B7GS0TBTP8eglCzeQ/z2Rdv
+  adUho4npzQKdx2iSSmpHW6strxQHVivbCxfQKAQaC6IN8GA7EIwC/NiQQhbNUxKF
+  Qyj/A8Ppk4glKv9ZioMwhX4W8nXqaoIYPpCZq1BVpdsnqofthOrbecqui8m3221D
+  eiIEXl5Jg+VAyEitV6sFml74CfNFfJ96j74BE51WTfV5ieRsF99vLJIu1ucoRJ32
+  9hwubeLve6iwwgjf3GARygymtDWUVoFX7H58FNhjd6R58uD0nb1Zc6vZgFERbKE6
+  fdIOBnI6yZkw7TJBmOUpXInd8boxx1OYR0U2VUt82jUKnrhkj7Lk7e7R5dLuSDIS
+  vz3JzXMkC7aKanl5KqecmUJWg4LEKDQZMgDYTgAPEvmYplFMo9MMXTIW5JvlvXbi
+  jilwV0DcU5s6ry8FNDBO+XlIipXNlleG8bU8Q8sX/OooVIEqf+VgHf0yvprQa8Zl
+  76m4TqXKmrk4h/X7ki75vyzDyCYISFKp5SI2IOKppAXlyRLdkQfV+B1KiBxvQcam
+  Ii8NqQg2s6Dz0XnzQzncrGUTlPfBCCn62bccpVT/vKhZB+G/bZGujVDWC6NRAxL0
+  BDfVH5Zf5GnIsWFFVv2gmdXvYHI47B5k2flqfCyzUFN5L5Wu1e12
+  -----END CERTIFICATE-----
+

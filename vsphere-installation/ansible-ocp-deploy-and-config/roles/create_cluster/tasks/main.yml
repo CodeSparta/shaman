@@ -1,0 +1,141 @@
+---
+- name: Check if cluster exists
+  shell: "timeout 5 $(which oc) cluster-info"
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+  ignore_errors: yes
+  register: exists
+
+- name: Add nodes only
+  include_tasks: add_nodes.yml
+  when: exists.rc == 0
+
+- name: Copy ignition config files to terraform templates
+  template:
+    src: roles/create_cluster/templates/terraform.tfvars.j2
+    dest: '{{ terraform_dir}}/terraform.tfvars'
+
+- name: Create template options file
+  template:
+    src: roles/create_cluster/templates/RHCOS.json.j2
+    dest: '{{ terraform_dir}}/RHCOS.json'
+
+- name: Create folder
+  shell: "govc folder.create '/{{ datacenter}}/vm/{{ folder }}'"
+  args:
+    chdir: '{{ terraform_dir }}'
+  environment:
+    GOVC_INSECURE: "true"
+    GOVC_PASSWORD: "{{ vcenter_passwd }}"
+    GOVC_USERNAME: "{{ vcenter_user }}"
+    GOVC_URL: "{{ vcenter_server }}"
+  register: folder_result
+  changed_when:
+  - folder_result.rc == 0
+  failed_when: 
+  - '"already exists" not in folder_result.stderr' 
+  - folder_result.rc != 0
+
+- name: Import ova template
+  shell: "govc import.ova -options=RHCOS.json -name={{ rhcos_template }} --folder='{{ folder }}' -ds={{ datastore }} -dc={{ datacenter }} http://{{ webserver_url }}/{{ ova_file}}"
+  args:
+    chdir: '{{ terraform_dir }}'
+  environment:
+    GOVC_INSECURE: "true"
+    GOVC_PASSWORD: "{{ vcenter_passwd }}"
+    GOVC_USERNAME: "{{ vcenter_user }}"
+    GOVC_URL: "{{ vcenter_server }}"
+  register: import_result
+  changed_when:
+  - import_result.rc == 0
+  - import_result.stderr.find('Uploading disk.vmdk')
+  failed_when: 
+  - '"already exists" not in import_result.stderr'
+  - import_result.rc != 0
+ 
+- name: Change guest ID
+  shell: "govc vm.change -vm.ipath='/{{ datacenter }}/vm/{{ folder }}/{{ rhcos_template }}' -g={{ guest_id }}"
+  args:
+    chdir: '{{ terraform_dir }}'
+  when:  import_result.stderr.find('already exists')
+  environment:
+    GOVC_INSECURE: "true"
+    GOVC_PASSWORD: "{{ vcenter_passwd }}"
+    GOVC_USERNAME: "{{ vcenter_user }}"
+    GOVC_URL: "{{ vcenter_server }}"
+
+- name: Initiate terraform
+  shell: "terraform init -plugin-dir=./.terraform.d/plugins"
+  args:
+    chdir: '{{ terraform_dir }}'
+
+- name: Initiate cluster
+  community.general.terraform:
+    project_path: '{{ terraform_dir }}'
+    state: present
+
+- name: Wait for bootstrap completion
+  command: |
+    openshift-install wait-for bootstrap-complete --dir={{ install_dir }}
+  register: bootstrap_output
+
+- name: Debug bootstrap
+  debug:
+    var: bootstrap_output
+
+- name: Set bootstrap status
+  set_fact:
+    is_bootstrap_complete: "{{ true if bootstrap_output.stderr is defined and bootstrap_output.stderr.find(bs_complete) != -1 else false }}"
+
+- name: Check bootstrap status
+  debug:
+    var: is_bootstrap_complete
+
+- name: Set bootstrap bool
+  vars:
+    - bootstrap_complete: "true"
+  template:
+    src: roles/create_cluster/templates/terraform.tfvars.j2
+    dest: '{{ terraform_dir }}/terraform.tfvars'
+    force: yes
+  when: bootstrap_complete|bool
+
+- name: Remove bootstrap
+  community.general.terraform:
+    project_path: '{{ terraform_dir }}'
+    state: present
+
+- name: Approve CSRs
+  include_tasks: approve_csrs.yml
+
+- name: Check cluster install status
+  command: |
+    openshift-install wait-for install-complete --dir "{{ install_dir }}" --log-level debug
+  register: install_complete
+  ignore_errors: yes
+  #when: is_bootstrap_complete|bool
+
+- name: Debug install status
+  debug:
+    var: install_complete
+
+- name: Set install status
+  set_fact:
+    cluster_install_status: "{{ true if install_complete.stderr is defined and install_complete.stderr.find(cluster_in_complete) != -1 else false}}"
+
+- name: Get cluster operators status
+  shell: >
+    $(which oc) get clusteroperators --no-headers=true | awk '{ print $1 }'
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+  register: operators_status
+  when: cluster_install_status|bool
+
+- name: Verify operators up
+  debug:
+    var: operators_status
+
+- name: Back up terraform state
+  copy: 
+    src: '{{ terraform_dir }}/terraform.tfvars'
+    dest: '{{ install_dir }}/terraform-{{ ansible_date_time.iso8601 }}.tfvars'

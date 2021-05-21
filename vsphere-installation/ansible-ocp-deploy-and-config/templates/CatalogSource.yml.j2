@@ -1,0 +1,10 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: {{ operator_name }}
+  namespace: openshift-marketplace 
+spec:
+  displayName: {{ operator_name.replace('-', ' ') | upper }}
+  publisher: Red Hat 
+  sourceType: grpc
+  image: {{ registry_host_fqdn }}/{{ local_repository }}/{{ operator_catalog_index | d('redhat-operator-index') }}:{{ operator_catalog_index_tag | d('v4.6') }} 

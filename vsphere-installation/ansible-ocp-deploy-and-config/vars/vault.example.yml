@@ -1,0 +1,15 @@
+# Registry config
+vault_registry_host_fqdn: "registry.ocptest.example.com"
+vault_registry_host_port: 5000
+vault_registry_admin_username: "registry-user"
+vault_registry_admin_password: "registry-pass"
+
+# OCP cluster config
+vault_ocp_cluster_user: 'kubeadmin'
+vault_ocp_cluster_user_password: 'e3MNU-eh5nC-Qhynq-6oJCu' # located in auth/kubeadmin-password file within ocp_install_dir
+vault_ocp_cluster_console_url: 'https://api.ocptest.example.com'
+
+# vCenter config
+vcenter_passwd: vcenter-passwd
+vcenter_user: vcenter-user
+

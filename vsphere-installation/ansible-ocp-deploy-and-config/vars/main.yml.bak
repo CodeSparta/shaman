@@ -1,0 +1,82 @@
+---
+mirror_registry_user: cloudctl
+mirror_registry_passwd: cloudctl
+cluster_name: "ocptest"
+domain_name: "dev.com"
+install_name: "afternoon-2-24-ocp-install-dir"
+install_dir: "/home/{{ ansible_env.USER }}/{{ install_name }}"
+local_registry: "registry.ocpcluster.dev.com:5000"
+pullsecret_email: "admin@dev.com"
+webserver_url: "bastion.ocpcluster.dev.com:8080"
+trust_bundle: "-----BEGIN CERTIFICATE-----
+ZTEhMB8GA1UEAwwYcmVnaXN0cnkub2NwMDEuZGV2LmZvcmdlMIICIjANBgkqhkiG
+9w0BAQEFAAOCAg8AMIICCgKCAgEAw06pdR3A0FCb0YX8lQb7Galkjdjflsoy3Rt3
+CKdaRpfbni1rWlqCC1dqKsr+ax4mUIg2CnGWG0TYERp3QalE3ukmJxyKRLF34qXe
+...
+hsz1ibBhM3U5SA3uL4MXsUJ3rvt68kajHGJALKJEI5529dlkadcNcUEU8rdXMGvT
+5Kvo/ltOEGaYvppB395w9rKJArVa1Rp9rwNUEIc75z+u/WdKPyLifRY/jJB5p0nU
+keIcCUjx5ydosY6f344vQyfOt1l3a5GyEWElqWs8mcTDZaXLIqkRTduN6jo9Kqw3
+0DgHYcgHWJerfT3lHKp0GiyLim5ATrtqYaQnLnCeVLmsRqwyOnMT2+4H3OV9+aJR
+rPyYFUyA//ZHEKhyisEoElFlLpzGINfzCPY4cwXHcfA0xPA0Zw1HDy7UWqfOs2Fz
+Eawkd90i2j0kcna923ijjfhGLKDHAKqultBhV5BL4slqQRCKybX22x4PZf85T4Es
+M7MJ4pqVrVVwr3o5Geh/98OAqc5XD5epQnUg48LfDev9kWjaMCd77qXhyVjMuZw5
+PiTkaTskqt0VZp1wGjK39KgnXphPnTWSFkM0AegWJaGJgfLYh7RSmmWH0lOBHjhN
+ok72
+-----END CERTIFICATE-----"
+
+## Vcenter Information
+datacenter: DEV.COM                 # vSphere datacenter where your cluster will live
+datastore: Int-Datastore-Test                  # vSphere datastore for your cluster
+vcenter_server: ocp-vcs01.dev.com    # server name for vcenter
+vcenter_passwd: "RedhatOCP@12345"         # password for your vcenter_user
+vcenter_user: administrator@dev.com              # make sure to use an administrator user that can create resources
+ 
+#Nginx vars
+use_httpd: true
+html_path: "/var/www/html"
+ 
+#Terraform vars
+terraform_dir : "../terraform"
+ 
+# Cluster configuration
+folder: "ocp-test-2"
+guest_id: "coreos64Guest" # this will probably never change, so it should probably go in <role_name>/vars/main.yml
+resource_pool_id: "OCP/Resources"
+network_id: "pg_vmtraffic730"
+network_adapter_type: "vmxnet3"
+rhcos_template: "rhcos-template-test"
+disk_thin_provisioned: "true"
+disk_size: 
+  - name: 
+ova_file: "rhcos-4.6.1-x86_64-vmware.x86_64.ova"
+
+dns_address: "10.1.1.157 nameserver=10.1.1.57"
+gateway: "10.1.1.1"
+netmask: "255.255.255.0"
+
+bootstrap_complete: "false" # these three should probably go in vars/main.yml as well
+bs_complete: "It is now safe to remove the bootstrap resources"
+cluster_in_complete: "Login to the console with user:"
+
+bootstrap: "10.1.1.155"
+masters:
+  - name: "master0" 
+    ip:  "10.1.1.160"
+  - name: "master1"
+    ip: "10.1.1.161"
+  - name: "master2"
+    ip: "10.1.1.162"
+infras:
+  - name: "infra0" 
+    ip:  "10.1.1.170"
+    #  - name: "infra1"
+    #    ip: "10.1.1.171"
+    #  - name: "infra2"
+    #    ip: "10.1.1.172"
+workers:
+  - name: "worker0" 
+    ip:  "10.1.1.163"
+    #  - name: "worker1"
+    #    ip: "10.1.1.164"
+    #  - name: "worker2"
+    #    ip: "10.1.1.165"

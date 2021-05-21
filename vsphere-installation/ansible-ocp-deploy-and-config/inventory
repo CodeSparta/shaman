@@ -1,0 +1,8 @@
+localhost
+
+# Example of specifying children in INI spec. 
+#This is not recommended as most variables should be defined within the vars directory.
+#[masters]
+#10.1.1.60 name=master0.ocpcluster.dev.com ip=10.1.1.60
+#10.1.1.61 name=master1.ocpcluster.dev.com ip=10.1.1.61
+#10.1.1.62 name=master2.ocpcluster.dev.com ip=10.1.1.62

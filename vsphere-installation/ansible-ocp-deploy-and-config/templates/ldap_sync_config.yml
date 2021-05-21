@@ -1,0 +1,40 @@
+apiVersion: redhatcop.redhat.io/v1alpha1
+kind: GroupSync
+metadata:
+  name: ldap-groupsync
+  namespace: group-sync-operator
+spec:
+  providers:
+  - ldap:
+      credentialsSecret:
+        name: ldap-secret
+        namespace: openshift-config
+      caSecret:
+        name: group-sync-cert
+        namespace: openshift-config
+        key: ca.crt
+      insecure: false
+      rfc2307:
+        groupMembershipAttributes:
+          - member
+        groupNameAttributes:
+        - cn
+        groupUIDAttribute: dn
+        groupsQuery:
+          baseDN: "<BASEDN CONFIG>"
+          scope: sub
+          derefAliases: never
+          pageSize: 0
+          filter: (<FILTER>)
+        tolerateMemberNotFoundErrors: false
+        tolerateMemberOutOfScopeErrors: false
+        userNameAttributes:
+        - uid
+        userUIDAttribute: dn
+        usersQuery:
+          baseDN: "<BASEDN CONFIG>"
+          scope: <SCOPE>
+          derefAliases: never
+          pageSize: 0
+      url: <LDAP_URL>
+    name: ldap

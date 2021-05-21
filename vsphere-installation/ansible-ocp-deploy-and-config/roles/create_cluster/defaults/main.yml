@@ -1,0 +1,8 @@
+---
+guest_id: "coreos64Guest"
+bootstrap_complete: "false"
+bs_complete: "It is now safe to remove the bootstrap resources"
+cluster_in_complete: "Login to the console with user:"
+terraform_not_found: "not found"
+terraform_already_managed: "already managed"
+rhcos_template: "{{ ova_file |replace('.ova','') }}"

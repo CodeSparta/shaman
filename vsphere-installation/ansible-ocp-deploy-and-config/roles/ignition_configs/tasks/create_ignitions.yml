@@ -1,0 +1,70 @@
+- name: Create install-config.yaml
+  template:
+    src: roles/ignition_configs/templates/installation-config.j2
+    dest: "{{ install_dir }}/install-config.yaml"
+
+- name: Make a copy of install-config.yaml
+  copy:
+    src: "{{ install_dir }}/install-config.yaml"
+    dest: "{{ install_dir }}/bak/install-config.yaml"
+    remote_src: yes
+
+- name: Create Kubernetes manifest files
+  command: 'openshift-install create manifests --dir={{ install_dir }}'
+
+- name: Remove k8s manifests
+  file:
+    path:  "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ install_dir }}/openshift/99_openshift-cluster-api_master-machines-0.yaml"
+    - "{{ install_dir }}/openshift/99_openshift-cluster-api_master-machines-1.yaml"
+    - "{{ install_dir }}/openshift/99_openshift-cluster-api_master-machines-2.yaml"
+
+- name: Remove machine set manifests
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ install_dir }}/openshift/99_openshift-cluster-api_worker-machineset-0.yaml"
+    - "{{ install_dir }}/openshift/99_openshift-cluster-api_worker-machineset-1.yaml"
+    - "{{ install_dir }}/openshift/99_openshift-cluster-api_worker-machineset-2.yaml"
+
+- name: Set masters to unschedulable
+  lineinfile:
+    path: '{{ install_dir }}/manifests/cluster-scheduler-02-config.yml'
+    regexp: "^  mastersSchedulable"
+    line: "  mastersSchedulable: False"
+
+- name: Backup manifests
+  copy:
+    src: '{{ install_dir }}/manifests'
+    dest: '{{ install_dir }}/bak/'
+    remote_src: yes
+
+- name: Create ignition configs
+  command: 'openshift-install create ignition-configs --dir={{ install_dir }}'
+
+- name: Generate append-bootstrap file
+  template:
+    src: roles/ignition_configs/templates/bootstrap-append.j2
+    dest: "{{ install_dir }}/append-bootstrap.ign"
+    mode: 0644
+
+- name: Backup ignition configs
+  copy:
+    src: '{{ install_dir }}/{{ item }}'
+    dest: '{{ install_dir }}/bak/{{ item }}'
+    remote_src: yes
+  loop:
+    - bootstrap.ign
+    - append-bootstrap.ign
+    - master.ign
+    - worker.ign
+
+- name: Base64 encode ignition config files
+  shell: 'base64 -w0 {{ install_dir }}/{{ item.ignition }} > {{ install_dir }}/{{ item.base64 }}'
+  loop:
+    - { ignition: 'append-bootstrap.ign', base64: 'append-bootstrap.64' }
+    - { ignition: 'master.ign', base64: 'master.64' }
+    - { ignition: 'worker.ign', base64: 'worker.64' }

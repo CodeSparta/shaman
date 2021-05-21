@@ -1,0 +1,34 @@
+apiVersion: storage.dell.com/v1
+kind: CSIUnity
+metadata:
+  name: csiunity1
+  namespace: dell-csi-operator
+spec:
+  driver:
+    configVersion: v3
+    replicas: 2
+    common:
+      image: "registry.ocpcluster.dev.com:5000/dellemc/csi-unity:v1.4.0.000R"
+      imagePullPolicy: IfNotPresent
+      envs:
+      - name: X_CSI_UNITY_DEBUG
+        value: "true"
+    sideCars:
+      - name: provisioner
+        args: ["--volume-name-prefix=csiunity"]
+      - name: snapshotter
+        args: ["--snapshot-name-prefix=csiunitysnap"]
+    storageClass:
+    - name: dell-unity-nfs
+      reclaimPolicy: "Delete"
+      allowVolumeExpansion: true
+      parameters:
+        storagePool: pool_1
+        arrayId: "foo"
+        protocol: "NFS"
+        hostIoSize: "8192"
+        nasServer: "bar"
+    snapshotClass:
+      - name: test-snap
+        parameters:
+          retentionDuration: ""

@@ -1,0 +1,81 @@
+apiVersion: "logging.openshift.io/v1"
+kind: "ClusterLogging"
+metadata:
+  name: "instance" 
+  namespace: "openshift-logging"
+spec:
+  managementState: "Managed"  
+  logStore:
+    type: "elasticsearch"  
+    retentionPolicy: 
+      application:
+        maxAge: {{ elaticsearch_maxage_application }}
+      infra:
+        maxAge: {{ elaticsearch_maxage_infra }}
+      audit:
+        maxAge: {{ elaticsearch_maxage_audit }}
+    elasticsearch:
+      nodeCount: {{ elasticsearch_node_count }} 
+{% if apply_nodeselector is defined and apply_nodeselector | bool %}
+      nodeSelector:
+        node-role.kubernetes.io/{{ infra_id }}: ""
+{% endif %}
+      storage:
+        storageClassName: {{ cluster_storage_class }} 
+        size: {{ elasticsearch_pv_size }}
+        resources: 
+          requests:
+            memory: {{ elasticsearch_memory }}
+        proxy: 
+          limits:
+            memory: {{ elasticsearch_proxy_memory_limit }}
+          requests:
+             memory: {{ elasticsearch_proxy_memory_request }}
+{% if apply_toleration is defined and apply_toleration | bool %}
+      tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/worker
+        operator: Exists
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/{{ infra_id }}
+        operator: Exists
+{% endif %}
+      redundancyPolicy: "SingleRedundancy"
+  visualization:
+    type: "kibana"  
+    kibana:
+{% if apply_nodeselector is defined and apply_nodeselector | bool %}
+      nodeSelector:
+        node-role.kubernetes.io/{{ infra_id }}: ""
+{% endif %}
+      replicas: 1
+{% if apply_toleration is defined and apply_toleration | bool %}
+      tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/worker
+        operator: Exists
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/{{ infra_id }}
+        operator: Exists
+{% endif %}
+  curation:
+    type: "curator"  
+    curator:
+{% if apply_nodeselector is defined and apply_nodeselector | bool %}
+      nodeSelector:
+        node-role.kubernetes.io/{{ infra_id }}: ""
+{% endif %}
+      schedule: "30 3 * * *"
+{% if apply_toleration is defined and apply_toleration | bool %}
+      tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/worker
+        operator: Exists
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/{{ infra_id }}
+        operator: Exists
+{% endif %}
+  collection:
+    logs:
+      type: "fluentd"  
+      fluentd: {}

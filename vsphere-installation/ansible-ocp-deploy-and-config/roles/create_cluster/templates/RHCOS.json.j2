@@ -1,0 +1,3 @@
+{
+    "DiskProvisioning": "{{ 'thin' if disk_thin_provisioned|bool or disk_thin_provisioned == 'true' else 'flat' }}"
+}

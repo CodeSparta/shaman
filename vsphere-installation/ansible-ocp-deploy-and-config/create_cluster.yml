@@ -1,0 +1,10 @@
+---
+- name: Create Cluster
+  hosts: localhost
+  connection: local
+  vars_files: 
+  - vars/deployment.yml
+  - vars/vault.yml
+  roles:
+  - ignition_configs
+  - create_cluster

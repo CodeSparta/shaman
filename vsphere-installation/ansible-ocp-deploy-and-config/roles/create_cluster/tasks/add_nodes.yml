@@ -1,0 +1,105 @@
+---
+- name: Import refresh tasks
+  include_tasks: refresh_tf_state.yml
+
+- name: Check template
+  block: 
+    - name: Check govc template
+      shell: govc vm.info -vm.ipath=/{{ datacenter }}/vm/{{ folder }}/{{ rhcos_template }}
+      args:
+        chdir: '{{ terraform_dir }}'
+      environment:
+        GOVC_INSECURE: "true"
+        GOVC_PASSWORD: "{{ vcenter_passwd }}"
+        GOVC_USERNAME: "{{ vcenter_user }}"
+        GOVC_URL: "{{ vcenter_server }}"
+
+  rescue: 
+    - name: Create template options file
+      template:
+        src: roles/create_cluster/templates/RHCOS.json.j2
+        dest: '{{ terraform_dir}}/RHCOS.json'
+     
+    - name: Import ova template
+      shell: "govc import.ova -options=RHCOS.json -name={{ rhcos_template }} --folder={{ folder }} -ds={{ datastore }} -dc={{ datacenter }} http://{{ webserver_url }}/{{ ova_file}}"
+      args:
+        chdir: '{{ terraform_dir }}'
+      environment:
+        GOVC_INSECURE: "true"
+        GOVC_PASSWORD: "{{ vcenter_passwd }}"
+        GOVC_USERNAME: "{{ vcenter_user }}"
+        GOVC_URL: "{{ vcenter_server }}"
+      register: import_result
+      failed_when:
+      - '"already exists" not in import_result.stderr'
+      - import_result.rc != 0
+    
+    - name: Change guest ID
+      shell: "govc vm.change -vm.ipath=/{{ datacenter }}/vm/{{ folder }}/{{ rhcos_template }} -g={{ guest_id }}"
+      args:
+        chdir: '{{ terraform_dir }}'
+      when: '"already exists" in import_result.stderr'
+      environment:
+        GOVC_INSECURE: "true"
+        GOVC_PASSWORD: "{{ vcenter_passwd }}"
+        GOVC_USERNAME: "{{ vcenter_user }}"
+        GOVC_URL: "{{ vcenter_server }}"
+    
+- name: Check ignition exits 
+  stat: 
+    path: "{{ install_dir }}/worker.ign"
+  register: file_exists
+
+- fail:
+    msg: "Ignition file not in install-dir."
+  when: not file_exists.stat.exists
+
+- name: Initiate terraform
+  shell: "terraform init -plugin-dir=./.terraform.d/plugins"
+  args:
+    chdir: '{{ terraform_dir }}'
+
+- name: Pull terraform state
+  shell: "terraform state pull"
+  args: 
+    chdir: '{{ terraform_dir }}'
+
+- name: Set bootstrap bool
+  vars:
+    - bootstrap_complete: "true"
+  template:
+    src: roles/create_cluster/templates/terraform.tfvars.j2
+    dest: '{{ terraform_dir }}/terraform.tfvars'
+    force: yes
+
+- name: Run terraform
+  community.general.terraform:
+    project_path: '{{ terraform_dir }}'
+    state: present
+
+- name: Register CSRs
+  shell: "oc get csr --no-headers=true | grep Pending | awk '{ print $1 }'"
+  register: csr_list
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+  until: csr_list.stdout_lines|length > 0
+  retries: 30
+  delay: 10
+
+- name: Approve CSRs
+  command: "oc adm certificate approve {{ item }}"
+  loop: "{{ csr_list.stdout_lines }}"
+  environment:
+    KUBECONFIG: "{{ install_dir }}/auth/kubeconfig"
+
+- name: Wait for nodes to be in ready
+  command: "oc get nodes"
+  register: nodes
+  until: "'NotReady' not in nodes.stdout"
+
+- name: Label infras
+  command: "oc label node {{ item.name }} node-role.kubernetes.io/infra="" --overwrite"
+  with_items: infras
+
+- name: End task
+  meta: end_play

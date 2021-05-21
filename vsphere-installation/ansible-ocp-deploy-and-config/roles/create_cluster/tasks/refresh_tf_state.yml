@@ -1,0 +1,39 @@
+---
+- name: Refresh Bootstrap
+  shell: "terraform import module.bootstrap[0].vsphere_virtual_machine.vm /{{ datacenter }}/vm/{{ folder }}/bootstrap"
+  args:
+    chdir: '{{ terraform_dir }}'
+  ignore_errors: yes
+
+- name: Refresh Masters
+  shell: "terraform import 'module.master[\"{{ item.name }}\"].vsphere_virtual_machine.vm' /{{ datacenter }}/vm/{{ folder }}/{{ item.name }}"
+  args:
+    chdir: '{{ terraform_dir }}'
+  loop: "{{ masters }}"
+  register: masters_refresh
+  failed_when:  
+  - 'terraform_already_managed not in masters_refresh.stderr'
+  - 'terraform_not_found not in masters_refresh.stderr'
+  - masters_refresh.rc != 0
+
+- name: Refresh Infras
+  shell: "terraform import 'module.infra[\"{{ item.name }}\"].vsphere_virtual_machine.vm' /{{ datacenter }}/vm/{{ folder }}/{{ item.name }}"
+  args:
+    chdir: '{{ terraform_dir }}'
+  loop: "{{ infras }}"
+  register: infras_refresh
+  failed_when: 
+  - 'terraform_already_managed not in infras_refresh.stderr'
+  - 'terraform_not_found not in infras_refresh.stderr'
+  - infras_refresh.rc != 0
+
+- name: Refresh Workers 
+  shell: "terraform import 'module.worker[\"{{ item.name }}\"].vsphere_virtual_machine.vm' /{{ datacenter }}/vm/{{ folder }}/{{ item.name }}"
+  args:
+    chdir: '{{ terraform_dir }}'
+  loop: "{{ workers }}"
+  register: workers_refresh
+  failed_when: 
+  - 'terraform_already_managed not in workers_refresh.stderr'
+  - 'terraform_not_found not in workers_refresh.stderr'
+  - workers_refresh.rc != 0

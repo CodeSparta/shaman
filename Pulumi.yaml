@@ -1,0 +1,6 @@
+name: shaman
+runtime:
+  name: python
+  options:
+    virtualenv: venv
+description: openshift control plane configuration

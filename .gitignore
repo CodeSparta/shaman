@@ -1,3 +1,4 @@
 .terraform
 .swp
 terraform.tfstate*
+venv
